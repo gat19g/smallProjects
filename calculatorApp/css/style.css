@@ -55,6 +55,7 @@ table {
   --lightColorLight: #c0c0c0;
   --accentColor: #f69908;
   --accentColorLight: #fddaa0;
+  --accentColorLightLight: #fff6e7;
   --textDarkColor: black;
   --textLightColor: #f6f6f6;
   --opacity: 90%;
@@ -164,6 +165,11 @@ span.sub {
 h1.btn {
  background: var(--accentColor);
  color: var(--textLightColor);
+ transition: .5s background-color, 0.25s color;
+}
+
+#equal{
+  transition: 0s background-color, 0s color;
 }
 
 h2.btn {
@@ -175,6 +181,32 @@ h3.btn {
   background: var(--lightColor);
   color: var(--textDarkColor);
 }
+
+h1.btn.active {
+  background-color: var(--accentColorLightLight);
+  color: var(--accentColor);
+}
+
+/* only for if key is pressed. JS will romove after a few seconds */
+
+h1.btn.keyOn {
+  transition: opacity .25s, background-color .1s !important;
+  background-color: var(--accentColorLightLight) !important;
+  color: var(--accentColor);
+  opacity: var(--opacity) !important;
+ }
+ 
+ h2.btn.keyOn{
+  transition: opacity .25s, background-color .1s !important;
+  background-color: var(--lightColor) !important;
+  opacity: var(--opacity) !important;
+ }
+ 
+ h3.btn.keyOn {
+  transition: opacity .25s, background-color .1s !important;
+  background-color: var(--textLightColor) !important;
+  opacity: var(--opacity) !important;
+ }
 
 #zero {
   flex-grow: 2;
