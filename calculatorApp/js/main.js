@@ -381,8 +381,8 @@ function runOperationDivide(){
     {
         if(checkIfNumberClicked()){sendCurrNumToSecondNum()}
         resetForOperation()
-        strSecondDisplay = addOperatorToString(strSecondDisplay, STR_OperatorMulti)
-        if( (intSecondNum === null) || (intSecondNum === 0 && !checkIfNumberClicked(0))){strSecondDisplay = STR_OperatorMulti}
+        strSecondDisplay = addOperatorToString(strSecondDisplay, STR_OperatorDiv)
+        if( (intSecondNum === null) || (intSecondNum === 0 && !checkIfNumberClicked(0))){strSecondDisplay = STR_OperatorDiv}
         updateSecondDisplay()
     }
 }
