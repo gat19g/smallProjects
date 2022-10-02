@@ -88,6 +88,10 @@ html {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+body{
+  /* background: linear-gradient(90deg, #f0f0f0, #cfcfcf); */
+  background: linear-gradient(90deg, #e8e8e8, #d7d7d7);
+}
 
 /******************************************
 /* LAYOUT
@@ -99,11 +103,12 @@ html {
 
 body > .container {
   max-width: calc(25 * var(--baseUnitSize));
-  margin: auto;
+  margin: 2.5vw auto;
   padding: calc(1 * var(--baseUnitSize));
   flex-flow: row wrap;
-  background: black;
+  background: linear-gradient(150deg, #383838, #1d1d1d);
   border-radius: calc(1 * var(--baseUnitSize));
+  box-shadow: .25vw .1vw #8f8f8f, .65vw .3vw #414141, 1.25vw .75vw 1vw #00000080;
 }
 
 /******************************************
@@ -117,16 +122,18 @@ h1, h2, h3 {
 
 #topContainer{
   flex-direction: column;
-  background: var(--darkColor);
+  background: linear-gradient(270deg, var(--darkColor), #404040);
   border-radius: calc(1 * var(--baseUnitSize));
   padding: calc(1 * var(--baseUnitSize));
   margin-bottom: calc(1 * var(--baseUnitSize));
+  box-shadow: inset .15vw .15vw var(--lightColorLight), inset -.2vw -.2vw var(--lightColor)
 }
 #calcSpot {
   width: 100%;
   height: calc(1.5 * var(--baseUnitSize));
   font-size: calc(1.5 * var(--baseUnitSize));
   color: var(--textLightColor);
+  text-shadow: .15vw .15vw var(--darkColor);
   text-align: right;
   margin-bottom: calc(1 * var(--baseUnitSize));
 }
@@ -135,6 +142,7 @@ h1, h2, h3 {
   height: calc(3 * var(--baseUnitSize));
   font-size: calc(3 * var(--baseUnitSize));
   color: var(--textLightColor);
+  text-shadow: .35vw .35vw var(--darkColor);
   text-align: right;
 }
 
@@ -160,6 +168,15 @@ span.sub {
   text-align: center;
   background: gray;
   border-radius: 50%;
+  box-shadow: .05vw .05vw #b2b2b2, inset .05vw .05vw #212121;
+}
+
+.btn:active{
+  box-shadow: inset .2vw .2vw #212121;
+}
+
+.btn.keyOn{
+  box-shadow: inset .2vw .2vw #212121;
 }
 
 h1.btn {
