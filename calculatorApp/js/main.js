@@ -61,6 +61,21 @@ function runAddDigit(intNumber){
     }
     recordNewClick(`${STR_NUMBER} ${intNumber}`)
     changeACtoC()
+
+    //If the current number is too long, abort function.
+    if(checkNumTooLongForDisplay(intCurrentNum) === true){
+        console.log('Error: Cannot add digit. Display full. Aborting function...')
+        return undefined
+    }
+    if((checkNumLengthFull(strMainDisplay) > 8) && (checkIfLastKeyIsZero())){
+        console.log('Error: Cannot add digit. Display full. Aborting function...')
+        return undefined
+    }
+    if(((String(intCurrentNum).includes('e')) && (String(intCurrentNum).slice(3).length > 1))){
+        console.log('Error: Cannot add digit. Display full. Aborting function...')
+        return undefined
+    }
+
     //Adds number to the current number variable
     // Assign decimal length factor
     let intInitialDecLength = 0
@@ -70,15 +85,20 @@ function runAddDigit(intNumber){
         }else{
             intInitialDecLength = checkNumLengthDecDigits(intCurrentNum) + intCountOfLastZeros
         }
-        checkNumLengthDecDigits(intCurrentNum) + intCountOfLastZeros
     const intDecLengthFactor = Math.pow(10, (intInitialDecLength + 1))
-    //If the current number is too long, abort function.
-    if(checkNumTooLongForDisplay(intCurrentNum) === true){
-        console.log('Error: Cannot add digit. Display full. Aborting function...')
-        return undefined
-    }
     //If the dot has been clicked, do the following:
     if(bDotOn === true && intNumber !== 0){
+        //If number is in scientific notation, add in a different way
+        if(String(intCurrentNum).includes('e')){
+            intDecLength = parseInt(String(intCurrentNum).slice(3))
+            intCurrentNum = intCurrentNum + (intNumber / 10**intDecLength )
+            //Format Display Variable
+            strMainDisplay = intCurrentNum
+            // strMainDisplay = formatDisplayVar(strMainDisplay)
+            updateMainDisplay()
+            return true
+        }
+        //Else, add normally
         addDigitToDecimal(intNumber, intDecLengthFactor, intCountOfLastZeros)
     }else if(bDotOn === true && intNumber === 0){
             //Format Display Variable
@@ -441,11 +461,13 @@ function updateSecondDisplay(){
 }
 
 function formatDisplayVar(input){
+    //If number is infinity, return the number and exit
+    if(input === Infinity){return input}
+
     //Takes in a numeric answer, converts to string, adds commas and/or scientific notation
     let strNum = String(input)
     let bNumHasDec = false
     let bNumNeg = false
-    let bNumTooBig = false
     let intNumWhole = null
     let intNumDec = null
     //If number is negative, convert to absolute and record the original number is negative
@@ -469,24 +491,7 @@ function formatDisplayVar(input){
     //Add commas to whole number
     intNumWhole = addCommas(intNumWhole)
 
-    //Decide if number needs to be reduced
-    // if(intNumWhole.length + intNumDec.length > 9){
-
-    // }
-    //If number needs to be reduced:
-        //If number is less than zero, convert to decimal scientific notation ex: 4.5e-5
-
-        //If number is greater than zero, but has more decimal places than whole numbers, round the decimal
-        //Ex: 45.3453453445 becomes 45.345345
-
-        //If number is greater than zero, but has a quantity of whole nubmer integers greater than or equal to decimal places:
-            //If the number of whole number integers is greater than 9, convert to whole number scientific notation
-
-            //If the whole number integers is 9 or less, round the decimal places up.
-
-
-
-    //Join number together
+    ///// Join number together /////
     //Add negative back, if needed
     if(bNumNeg === true){
         intNumWhole = toggleNegative(intNumWhole)
@@ -827,8 +832,6 @@ arrClickHistory = []
 }
 
 function runSelectKeyEventAction(inputKey , inputCode){
-    console.log(inputKey)
-    console.log(inputCode)
     //If keystroke is a number, run the add digit function
     if(inputKey == 0){
         document.querySelector('#zero').classList.add('keyOn')
@@ -897,7 +900,7 @@ function runSelectKeyEventAction(inputKey , inputCode){
         setTimeout(function(){document.querySelector('#dot').classList.remove('keyOn')}, INT_REMOVE_SPEED)
     }
 
-    if(inputKey === 'c'){
+    if(inputKey === 'c' || inputKey === 'C' || inputKey === 'Backspace'){
         document.querySelector('#ac').classList.add('keyOn')
         runClearKey()
         setTimeout(function(){document.querySelector('#ac').classList.remove('keyOn')}, INT_REMOVE_SPEED)
@@ -928,14 +931,13 @@ function runSelectKeyEventAction(inputKey , inputCode){
         runOperation(STR_MULTIPLY)
         setTimeout(function(){document.querySelector('#multiply').classList.remove('keyOn')}, INT_REMOVE_SPEED)
     }
-    if(inputKey === '/' || inputKey === 'd' || inputKey === 'D'){
+    if(inputKey === '/' || inputKey === 'd' || inputKey === 'D' || inputKey === `\u005C`){
         document.querySelector('#divide').classList.add('keyOn')
         runOperation(STR_DIVIDE)
         setTimeout(function(){document.querySelector('#divide').classList.remove('keyOn')}, INT_REMOVE_SPEED)
     }
 
-
-    if(inputKey === 'Enter'){
+    if(inputKey === 'Enter' || inputKey === '='){
         document.querySelector('#equal').classList.add('keyOn')
         runOperation(STR_EQUAL)
         setTimeout(function(){document.querySelector('#equal').classList.remove('keyOn')}, INT_REMOVE_SPEED)
@@ -975,122 +977,3 @@ document.querySelector('#equal').addEventListener('click',function(){runOperatio
 
 // Keyboard listeners
 document.addEventListener('keydown', (KeyboardEvent) => runSelectKeyEventAction(KeyboardEvent.key, KeyboardEvent.code))
-
-/*  ///// PSEUDO CODE /////
-/////Variables Needed
-
-//CONST VARs
-const STR_BLANK = ''
-const STR_ADD = 'add'
-const STR_SUB = 'subtract'
-const STR_MULTIPLY = 'multiply'
-const STR_DIVIDE = 'divide'
-const STR_EQUAL = 'equals'
-const STR_PERCENT = 'percent'
-const STR_PLUSMINUS = 'plusminus'
-const STR_ALLCLEAR = 'allclear'
-
-//STRING VARs
-let strMainDisplay = STR_BLANK
-let strSecondDisplay = STR_BLANK
-let strCurrentKey = null
-let strLastKey = null
-
-//INTEGER VARS
-let intCurrentNum = 0
-let intSecondNum = null
-
-
-/////WHEN USER CLICKS A DIGIT:
-If the intCurrentNum is too long, abort function.
-
-If the dot has been clicked:
-    Use function to add digit to the end of the decimal value of the intCurrentNum variable
-If the dot has not been clicked:
-    Use function to add digit to the end of the integer value of the intCurrentNum variable
-
-Update the strMainDisplay variable with the intCurrentNum variable
-Add commas to the integers (but not decimals) of the strMainDisplay
-Update the display area with the strMainDisplay variable
-end function
-
-/////WHEN USER CLICKS AN OPERATION:
-    Make strCurrentOpperator euqal to the opperation just clicked
-    If intCurrentNum equals 0, then abort function, else, keep going
-
-If a intSecondNum is not stored (equals null):
-    move the intCurrentNum into the intSecondNum variable
-    clear the intCurrentNum variable (make equal to 0)
-    
-    //update main display
-    update the strMainDisplay variable with the STR_BLANK variable
-    update the main display
-
-    //update second display
-    update the strSecondDisplay variable with the intSecondNum variable
-    Add commas to the integers (but not decimals) of the strSecondDisplay
-    Add the current opperator variable to the strSecondDisplay variable
-    update the second display
-    end function
-
-If a second number is stored (does not equal null):
-    perform selected operation with intSecondNum variable and intCurrentNum variable (except division)
-        If strCurrentOpperator = divide, the special divide function
-            - find out how many decimals are in each number
-            - assign intFirstNumDecPlaces and intSecondNumDecPlaces
-            - multiply first number by 10^intFirstNumDecPlaces and second number likewise
-            - divide the whole integer numbers
-            - convert back to decimal
-            - return result
-
-    store the answer to the intSecondNum variable
-    make intCurrentNum variable = 0
-
-    //update main display
-    make strMainDisplay variable = the STR_BLANK variable
-    update the main display
-
-    //update second display
-    save the intSecondNum to the strSecondDisplay variable
-    If display variable is too long, convert to scientific notation
-    Otherwise, add commas to the whole integers only
-    update the second display
-
-    
-/////WHEN USER CLICKS EQUALS
-    If intSecondNum = null, abort function
-
-    Otherwise,
-    perform selected operation with intSecondNum variable and intCurrentNum variable (except division)
-        If strCurrentOpperator = divide, the special divide function
-            - find out how many decimals are in each number
-            - assign intFirstNumDecPlaces and intSecondNumDecPlaces
-            - multiply first number by 10^intFirstNumDecPlaces and second number likewise
-            - divide the whole integer numbers
-            - convert back to decimal
-            - return result
-
-    store the answer to the intSecondNum variable
-    make intCurrentNum variable = 0
-
-    //update main display
-    make strMainDisplay variable = the STR_BLANK variable
-    update the main display
-
-    //update second display
-    save the intSecondNum to the strSecondDisplay variable
-    If display variable is too long, convert to scientific notation
-    Otherwise, add commas to the whole integers only
-    update the second display
-
-/////WHEN USER CLICKS +/- variable
-    if the current number is not 0, 
-    convert the current number to whole number by multiplying by 10^number of decimal places
-    multiply the current number by -1
-    divide by 10^ of decimal places
-
-
-
-
-
-*/
